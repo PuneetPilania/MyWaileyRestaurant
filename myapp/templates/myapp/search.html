@@ -1,0 +1,22 @@
+{% extends 'myapp/base.html' %}
+{% block css %}
+.heading{
+font-family:sans-serif;
+font-style:italic;
+padding:20px
+}
+{% endblock %}
+{% block body %}
+<h1 class='heading'> Locations: </h1>
+<div class="container">
+    {% for location, range, nSlides in location %}
+    {% for loc in location %}
+    <div class="jumbotron mt-3">
+        <h1>{{loc.loc}}</h1>
+        <hr>
+        <a href="{% url 'restaurant' loc.id %}"><button class='btn btn-primary'>Restaurants »</button></a>
+    </div>
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}

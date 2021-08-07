@@ -1,0 +1,58 @@
+{% extends "myapp/base.html" %}
+{% block body %}
+<!-- Cart Design-->
+<h1>Cart</h1>
+<div class="container">
+    <div class="card" id="card">
+        <div id="cartBtn" class="button my-2">
+        </div>
+        <div id="items" class="card-body">
+        </div>
+    </div>
+    <h1 id="total"></h1>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+//cheak cart is empty or not
+if (localStorage.getItem('cart') == null) {
+    var cart = {};
+} else {
+    cart = JSON.parse(localStorage.getItem('cart'));
+}
+
+//Declare Total
+var total = 0;
+
+//make onload function that automatically load function when the page is load
+window.onload = function what() {
+    if (localStorage.getItem('cart') == null) {
+        var cartMessege = `<h1>Your Cart is Empty ! Please Add item into it.</h1>`
+        $('#card').append(cartMessege)
+    } else {
+        for (var item in cart) {
+            total += cart[item][0]
+            var cartBtn = document.getElementById("cartBtn");
+
+            cartBtn.innerHTML = `<a id="placeOrder" href="{% url 'placeOrder' %}" class="btn btn-primary mx-2">Place Order</a><a id="addMore" href="/location/rpage/${cart[item][4]}/" class="btn btn-primary mx-2">Add more Item</a><a id="clearBtn" onclick="clearCart()" href="/location/rpage/${cart[item][4]}/" class="btn btn-primary mx-2">Clear Cart</a><hr>`
+            $('#cartBtn').append(cartBtn);
+
+            var cartSave = `<div class=" my-1"><h5 id="dishName" class="card-title">Dish Name: ${cart[item][2]}</h5>
+                <span class="">Quantity: ${cart[item][1]}</span><br>
+
+                <p id="dishPrice" class="card-text">Price : ${cart[item][3]}</p></div><hr>`
+
+            $('#items').append(cartSave);
+            document.getElementById("total").innerHTML = `Your Total is Rs.${total}/Only..`
+            
+        }
+        
+    }
+};
+
+//function for clear cart
+function clearCart() {
+    localStorage.clear();
+};
+</script>
+{% endblock %}

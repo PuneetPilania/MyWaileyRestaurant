@@ -1,0 +1,82 @@
+{% extends 'myapp/base.html' %}
+{% block body %}
+<h6 style="color:red; visibility:hidden" id="restaurant"> {{restaurant.id}} </h6>
+<h1> {{restaurant.name}} Menu Card : </h1>
+<div class="container my-5">
+    <div class="row">
+        {% for dish in menu %}
+        <div class="card m-4" style="width: 18rem;">
+            <img src="/media/{{dish.m_image}}" class="card-img-top" height="214" width="286">
+            <div class="card-body">
+                <h5 id="dishName{{dish.id}}" class="card-title">{{dish.dishName}}</h5>
+                <hr>
+                <p>
+                    <h6 id="dishPrice{{dish.id}}">{{dish.price}}</h6>
+                </p>
+                <p class="card-text">{{ dish.m_desc }}</p>
+                <div id="{{dish.id}}">
+                    <button id="{{dish.id}}" onclick="takeOrder(this.id)" class="btn btn-primary">Order</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<hr>
+<div class="container">
+    <div class="w3-container w3-padding-32 w3-center">
+        <center>
+            <h3>About Me, {{ restaurant.name }}</h3>
+        </center><br>
+        <img src="/media/{{restaurant.r_image}}" alt="Me" class="w3-image" style="display:block;margin:auto" height="200" width="200">
+        <div class="w3-padding-32">
+            <h6><i>With Passion For Real, Good Food</i></h6>
+            <p>{{restaurant.r_desc}}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+if (localStorage.getItem('cart') == null) {
+    var cart = {};
+} else {
+    cart = JSON.parse(localStorage.getItem('cart'));
+
+}
+
+function takeOrder(index) {
+    var quantity = 1;
+    var orderBtn = document.getElementById(index)
+
+    orderBtn.innerHTML = `<h6>Enter Quantity</h6><input type="number" id="quantityOrder" class="form-control" placeholder="1" min="2" max="100" autofocus=""><a href="{% url 'cart' %}"><button id=${index} onclick="placeOrder(this.id)" class="btn btn-primary"> Add to cart </button></a>`
+
+};
+
+
+function placeOrder(index) {
+    console.log("i am")
+    var idstr = index.toString();
+    name = document.getElementById('dishName' + idstr).innerHTML;
+    price = document.getElementById('dishPrice' + idstr).innerHTML;
+    restaurant = document.getElementById('restaurant').innerHTML;
+    quantity = document.getElementById("quantityOrder");
+
+    if (quantity.value == "") {
+        quantity.value = 1;
+    }
+
+    cart[idstr] = [parseInt(quantity.value) * parseInt(price), parseInt(quantity.value), name, parseInt(price), parseInt(restaurant)];
+    updateCart(cart);
+
+    console.log(cart)
+};
+
+function updateCart(cart) {
+    var sum = 0;
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+}
+</script>
+{% endblock %}
